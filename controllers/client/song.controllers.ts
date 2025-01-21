@@ -8,7 +8,7 @@ import FavoriteSong from "../../model/favorite-songs.model";
 export const index = async (req:Request,res:Response) => {
     const slugTopic:string = req.params.slugTopic;
     const topic = await Topic.findOne({slug :slugTopic,deleted:false,status:"active"});
-    const songs = await Song.find({topicId : topic.id,deleted:false,status:"active"}).select("id title like avatar singerId createdAt slug");
+    const songs = await Song.find({topicId :topic.id,deleted:false,status:"active"}).select("id title like avatar singerId createdAt slug");
     for (const song of songs) {
         const info = await Singer.findOne({_id :song.singerId ,deleted:false,status:"active"}).select("fullName");
         song["info"] = info;
@@ -26,7 +26,7 @@ export const detail = async (req:Request,res:Response) => {
     const topic = await Topic.findOne({_id:song["topicId"]}).select("title");
     const singer = await Singer.findOne({_id : song["singerId"]}).select("fullName");
     const favorite = await FavoriteSong.findOne({
-        songId : song.id,
+        songId : song["id"],
         // user_id:res.locals.user.id
     })
     if (favorite) {
@@ -81,7 +81,6 @@ export const like = async (req:Request,res:Response) => {
 export const favorite = async (req:Request,res:Response) => {
     try {
         const songId:string = req.body.id;
-        const status : string = req.body.status;
         const song = await Song.findOne({_id:songId,deleted:false,status:"active"});
         if(song) {
             const exitsFavoriteSong = await FavoriteSong.findOne(
@@ -115,4 +114,24 @@ export const favorite = async (req:Request,res:Response) => {
             message:"Error"
         })
     }
+}
+
+
+// [GET] /songs/favorite
+export const favoriteSong = async (req:Request,res:Response) => {
+    const songs = await FavoriteSong.find({
+        // user_id :res.locals.user.id
+    })
+    for (const item of songs) {
+        const inforSong = await Song.findOne({_id :item.songId,deleted:false,status:"active"});
+        const singer = await Singer.findOne({_id : inforSong.singerId}).select("fullName");
+        item["title"] = inforSong.title;
+        item["avatar"] = inforSong.avatar;
+        item["singerName"] = singer.fullName;
+        item["slug"] = inforSong.slug;
+    }
+    res.render("client/pages/songs/favorite",{
+        titlePage:"Bài hát yêu thích",
+        songs:songs
+    })
 }

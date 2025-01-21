@@ -2,6 +2,7 @@ import express,{ Express} from "express";
 import * as database from "./config/database";
 import dotenv from "dotenv";
 import  BodyParser  from "body-parser";
+import moment from "moment";
 dotenv.config();
 const app:Express = express();
 const port:number | string= process.env.Port || 3000;
@@ -10,7 +11,7 @@ import { RouterClient } from "./routes/client/index.route";
 
 app.set('views', './views');
 app.set('view engine', 'pug');
-
+app.locals.moment = moment;
 // parse application/x-www-form-urlencoded
 app.use(BodyParser.urlencoded({ extended: false }));
 // parse application/json
