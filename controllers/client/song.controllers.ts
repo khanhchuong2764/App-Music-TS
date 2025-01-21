@@ -31,3 +31,38 @@ export const detail = async (req:Request,res:Response) => {
         singer:singer
     });
 }
+
+// [PATCH] /songs/like
+export const like = async (req:Request,res:Response) => {
+    try {
+        const SongId:string = req.body.id;
+        const status:string = req.body.status;
+        const song = await Song.findOne({_id : SongId,deleted:false,status:"active"});
+        if(song) {
+            let newLike = song.like;
+            switch (status) {
+                case "like":
+                    newLike++;
+                    break;
+                case "dislike":
+                    newLike--;
+                    break;
+                default:
+                    break;
+            }
+            await Song.updateOne({_id : SongId},{
+                like : newLike
+            })
+            res.json({
+                code:200,
+                message:"Thanh Cong",
+                newLike : newLike
+            })
+        }
+    } catch (error) {
+        res.json({
+            code:400,
+            message:"Error"
+        })
+    }
+}
