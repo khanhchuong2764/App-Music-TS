@@ -2,6 +2,7 @@ import { Request,Response } from "express";
 import Topic from "../../model/topic.model";
 import Song from "../../model/songs.model";
 import Singer from "../../model/singer.model";
+import FavoriteSong from "../../model/favorite-songs.model";
 
 // [GET] /songs/:slugTopic
 export const index = async (req:Request,res:Response) => {
@@ -24,6 +25,15 @@ export const detail = async (req:Request,res:Response) => {
     const song = await Song.findOne({slug:slug,deleted:false,status:"active"});
     const topic = await Topic.findOne({_id:song["topicId"]}).select("title");
     const singer = await Singer.findOne({_id : song["singerId"]}).select("fullName");
+    const favorite = await FavoriteSong.findOne({
+        songId : song.id,
+        // user_id:res.locals.user.id
+    })
+    if (favorite) {
+        song["favorite"] = true;
+    }else { 
+        song["favorite"] = false;
+    }
     res.render("client/pages/songs/detail",{
         titlePage : song.title,
         song:song,
@@ -59,6 +69,46 @@ export const like = async (req:Request,res:Response) => {
                 newLike : newLike
             })
         }
+    } catch (error) {
+        res.json({
+            code:400,
+            message:"Error"
+        })
+    }
+}
+
+// [PATCH] /songs/favorite
+export const favorite = async (req:Request,res:Response) => {
+    try {
+        const songId:string = req.body.id;
+        const status : string = req.body.status;
+        const song = await Song.findOne({_id:songId,deleted:false,status:"active"});
+        if(song) {
+            const exitsFavoriteSong = await FavoriteSong.findOne(
+                {
+                    songId:songId,
+                    // user_id : res.locals.user_id
+                }
+            )
+            if(exitsFavoriteSong) {
+                await FavoriteSong.deleteOne({
+                        songId:songId,
+                        // user_id : res.locals.user_id
+                    }
+                )
+            }else {
+                const data = {
+                    songId :songId,
+                    // user_id : res.locals.user.id
+                }
+                const SongFavorite = new FavoriteSong(data);
+                await SongFavorite.save();
+            }
+        }
+        res.json({
+            code:200,
+            message:"Thanh Cong"
+        })
     } catch (error) {
         res.json({
             code:400,

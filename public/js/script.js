@@ -61,3 +61,33 @@ if(ButtonLike) {
 }
 
 // End Like
+
+// Favorite Song
+const btnFavoriteSong = document.querySelector("[btn-favorite]");
+if(btnFavoriteSong) {
+    btnFavoriteSong.addEventListener("click",() => {
+        const id = btnFavoriteSong.getAttribute("btn-favorite");
+        const isActive = btnFavoriteSong.classList.contains("active");
+        btnFavoriteSong.classList.toggle("active");
+        const api = `/songs/favorite`;
+        const data = {
+            id: id
+        }
+        fetch(api,{
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(res => res.json())
+            .then(data =>{
+                if(data.code==200) {
+                    console.log("Them thanh cong");
+                }
+            })
+    })
+}
+
+
+// End Favorite Song
