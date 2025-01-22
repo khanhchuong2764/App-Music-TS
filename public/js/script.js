@@ -91,5 +91,43 @@ if(btnFavoriteSong.length > 0) {
     
 }
 
-
 // End Favorite Song
+
+// Search Suggest
+const boxSearch  = document.querySelector(".box-search");
+if(boxSearch) {
+    const input = boxSearch.querySelector("input[name='keyword']");
+    const innerSuggest = boxSearch.querySelector(".inner-suggest");
+    const innerList = boxSearch.querySelector(".inner-list");
+    input.addEventListener("keyup",() => {
+        const value = input.value;
+        fetch(`/search/suggest?keyword=${value}`)
+            .then(res => res.json())
+            .then(data =>{
+                if(data.songs.length > 0) {
+                    const html = data.songs.map(item => `
+                        <a class="inner-item" href="/songs/detail/${item.slug}">
+                            <div class="inner-image">
+                                <img src="${item.avatar}">
+                            </div>
+                            <div class="inner-info">
+                                <div class="inner-title">${item.title}</div>
+                                <div class="inner-singer">
+                                    <i class="fa-solid fa-microphone-lines"></i> ${item.singerFullName}
+                                </div>
+                            </div>
+                        </a>
+                    `
+                    )
+                    innerSuggest.classList.add("show");
+                    innerList.innerHTML = html.join("");
+                }else { 
+                    innerSuggest.classList.remove("show");
+                    innerList.innerHTML = "";
+                }
+            })
+    })
+}
+
+
+// End Search Suggest
