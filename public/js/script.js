@@ -22,6 +22,18 @@ if(AplayerSong) {
     ap.on('pause', function () {
         avatar.style.animationPlayState = "paused";
     });
+    const spanListen = document.querySelector(".inner-listen span")
+    ap.on('ended', function () {
+        fetch(`/songs/listen/${Song._id}`,{
+            method: "PATCH"
+        })
+            .then(res => res.json())
+            .then(data =>{
+                if(data.code == 200) {
+                    spanListen.innerHTML = data.listen;
+                }
+            })
+    });
 }
 // End APlayer
 
@@ -131,3 +143,9 @@ if(boxSearch) {
 
 
 // End Search Suggest
+
+// Listen
+
+
+
+// End Listen

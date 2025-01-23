@@ -10,6 +10,8 @@ router.patch("/favorite", controller.favorite)
 
 router.get("/favorite", controller.favoriteSong)
 
+router.patch("/listen/:idSong", controller.listen)
+
 router.get("/:slugTopic", controller.index)
 
 export const songRouter = router;

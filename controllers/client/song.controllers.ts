@@ -135,3 +135,25 @@ export const favoriteSong = async (req:Request,res:Response) => {
         songs:songs
     })
 }
+
+
+// [GET] /songs/listen/:idSong
+export const listen = async (req:Request,res:Response) => {
+    const id:string= req.params.idSong;
+    const song = await Song.findOne({_id : id ,deleted:false,status:"active"});
+    let newListen:number = 0;
+    if (song) {
+        newListen = song.listen + 1;
+        await Song.updateOne({_id : id},{listen:newListen});
+        res.json({
+            code:200,
+            message: "Thanh Cong",
+            listen : newListen
+        })
+    }else {
+        res.json({
+            code:400,
+            message: "Error"
+        })
+    }
+}

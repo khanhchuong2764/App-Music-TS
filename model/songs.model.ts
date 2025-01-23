@@ -8,7 +8,14 @@ const SongSchema = new mongoose.Schema(
     description : String,
     lyrics : String,
     audio : String,
-    like: Number, // lưu Id người like []
+    like: {
+      type:Number,
+      default: 0
+    }, // lưu Id người like []
+    listen: {
+      type:Number,
+      default: 0
+    },
     slug: String,
     status: String,
     deleted: {
