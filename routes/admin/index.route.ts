@@ -1,7 +1,10 @@
 import { Express } from "express";
 import { dasboardRouter } from "./dashboard.route";
 import { systemConfig } from "../../config/system";
+import { topicRouter } from "./topic.route";
 export const RouterAdmin =(app:Express) => {
-    const PATH_ADMIN = systemConfig.preFixAdmin;
-    app.use(`/${PATH_ADMIN}/dashboard`, dasboardRouter);
+    const path = systemConfig.preFixAdmin;
+    app.use(`/${path}/dashboard`, dasboardRouter);
+
+    app.use(`/${path}/topics`, topicRouter);
 }
