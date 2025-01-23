@@ -8,7 +8,7 @@ cloudinary.config({
 
 export const streamUpload = (buffer:Buffer) => {
   return new Promise((resolve, reject) => {
-      let stream = cloudinary.uploader.upload_stream(
+      let stream = cloudinary.uploader.upload_stream({resource_type: "auto"},
         (error, result) => {
           if (result) {
             resolve(result);

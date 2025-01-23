@@ -14,3 +14,19 @@ export const UploadSingel = (req:Request,res:Response,next:NextFunction) => {
         next();
     }
 } 
+
+export const UploadMulti = async (req:Request,res:Response,next:NextFunction) => {
+    for (const key in req["files"]) {
+        req.body[key] = [];
+        const arrayfile = req["files"][key];
+        for (const item of arrayfile) {
+            try {
+                let result = await streamUpload(item.buffer);
+                req.body[key].push(result["secure_url"]);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+    next(); 
+}
