@@ -9,6 +9,7 @@ router.get("/", controller.index);
 
 router.get("/create", controller.create);
 
+
 router.post("/create",
     upload.fields(
         [
@@ -16,5 +17,14 @@ router.post("/create",
             { name: 'audio', maxCount: 1 }
         ]
     ), UploadMulti, controller.createPost);
+
+router.get("/edit/:idSong", controller.edit);
+
+router.patch("/edit/:idSong",upload.fields(
+    [
+        { name: 'avatar', maxCount: 1 },
+        { name: 'audio', maxCount: 1 }
+    ]
+), UploadMulti, controller.editPatch);
 
 export const SongRouter = router;

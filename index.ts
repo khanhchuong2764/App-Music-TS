@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import  BodyParser  from "body-parser";
 import moment from "moment";
 import path from "path";
+import methodOverride from "method-override";
 dotenv.config();
 const app:Express = express();
 const port:number | string= process.env.Port || 3000;
@@ -15,6 +16,10 @@ import { systemConfig } from "./config/system";
 app.set('views', './views');
 app.set('view engine', 'pug');
 app.locals.moment = moment;
+
+// override with POST having ?_method=DELETE
+app.use(methodOverride('_method'))
+
 // parse application/x-www-form-urlencoded
 app.use(BodyParser.urlencoded({ extended: false }));
 // parse application/json
